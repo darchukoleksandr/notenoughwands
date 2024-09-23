@@ -1,7 +1,7 @@
 package romelo333.notenoughwands.Items;
 
+import java.util.List;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
@@ -12,11 +12,11 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import cpw.mods.fml.common.registry.GameRegistry;
 import romelo333.notenoughwands.Config;
 import romelo333.notenoughwands.NotEnoughWands;
 import romelo333.notenoughwands.varia.Tools;
-
-import java.util.List;
 
 public class TeleportationWand extends GenericWand {
 
@@ -24,7 +24,9 @@ public class TeleportationWand extends GenericWand {
     private int maxdist = 30;
 
     public TeleportationWand() {
-        setup("TeleportationWand", "teleportationWand").xpUsage(4).availability(AVAILABILITY_NORMAL).loot(6);
+        setup("TeleportationWand", "teleportationWand").xpUsage(4)
+            .availability(AVAILABILITY_NORMAL)
+            .loot(6);
     }
 
     @Override
@@ -38,8 +40,16 @@ public class TeleportationWand extends GenericWand {
     @Override
     public void initConfig(Configuration cfg) {
         super.initConfig(cfg);
-        teleportVolume = (float) cfg.get(Config.CATEGORY_WANDS, getUnlocalizedName() + "_volume", teleportVolume, "Volume of the teleportation sound (set to 0 to disable)").getDouble();
-        maxdist = cfg.get(Config.CATEGORY_WANDS, getUnlocalizedName() + "_maxdist", maxdist, "Maximum teleportation distance").getInt();
+        teleportVolume = (float) cfg
+            .get(
+                Config.CATEGORY_WANDS,
+                getUnlocalizedName() + "_volume",
+                teleportVolume,
+                "Volume of the teleportation sound (set to 0 to disable)")
+            .getDouble();
+        maxdist = cfg
+            .get(Config.CATEGORY_WANDS, getUnlocalizedName() + "_maxdist", maxdist, "Maximum teleportation distance")
+            .getInt();
     }
 
     @Override
@@ -63,26 +73,26 @@ public class TeleportationWand extends GenericWand {
                 int y = position.blockY;
                 int z = position.blockZ;
                 if (world.isAirBlock(x, y + 1, z) && world.isAirBlock(x, y + 2, z)) {
-                    player.setPositionAndUpdate(x+.5, y + 1, z+.5);
+                    player.setPositionAndUpdate(x + .5, y + 1, z + .5);
                 } else {
                     switch (ForgeDirection.getOrientation(position.sideHit)) {
                         case DOWN:
-                            player.setPositionAndUpdate(x+.5, y - 2, z+.5);
+                            player.setPositionAndUpdate(x + .5, y - 2, z + .5);
                             break;
                         case UP:
                             Tools.error(player, "You will suffocate if you teleport there!");
                             return stack;
                         case NORTH:
-                            player.setPositionAndUpdate(x+.5, y, z - 1 + .5);
+                            player.setPositionAndUpdate(x + .5, y, z - 1 + .5);
                             break;
                         case SOUTH:
-                            player.setPositionAndUpdate(x+.5, y, z + 1+.5);
+                            player.setPositionAndUpdate(x + .5, y, z + 1 + .5);
                             break;
                         case WEST:
-                            player.setPositionAndUpdate(x - 1+.5, y, z+.5);
+                            player.setPositionAndUpdate(x - 1 + .5, y, z + .5);
                             break;
                         case EAST:
-                            player.setPositionAndUpdate(x + 1+.5, y, z+.5);
+                            player.setPositionAndUpdate(x + 1 + .5, y, z + .5);
                             break;
                         case UNKNOWN:
                             return stack;
@@ -91,7 +101,8 @@ public class TeleportationWand extends GenericWand {
             }
             registerUsage(stack, player, 1.0f);
             if (teleportVolume >= 0.01) {
-                ((EntityPlayerMP) player).worldObj.playSoundAtEntity(player, NotEnoughWands.MODID + ":teleport", teleportVolume, 1.0f);
+                ((EntityPlayerMP) player).worldObj
+                    .playSoundAtEntity(player, NotEnoughWands.MODID + ":teleport", teleportVolume, 1.0f);
             }
         }
         return stack;
@@ -99,10 +110,6 @@ public class TeleportationWand extends GenericWand {
 
     @Override
     protected void setupCraftingInt(Item wandcore) {
-        GameRegistry.addRecipe(new ItemStack(this),
-                "ee ",
-                "ew ",
-                "  w",
-                'e', Items.ender_pearl, 'w', wandcore);
+        GameRegistry.addRecipe(new ItemStack(this), "ee ", "ew ", "  w", 'e', Items.ender_pearl, 'w', wandcore);
     }
 }

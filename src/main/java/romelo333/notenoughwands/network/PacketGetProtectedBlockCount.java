@@ -1,13 +1,16 @@
 package romelo333.notenoughwands.network;
 
+import net.minecraft.world.World;
+
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.world.World;
 import romelo333.notenoughwands.ProtectedBlocks;
 
-public class PacketGetProtectedBlockCount implements IMessage,IMessageHandler<PacketGetProtectedBlockCount, PacketReturnProtectedBlockCount> {
+public class PacketGetProtectedBlockCount
+    implements IMessage, IMessageHandler<PacketGetProtectedBlockCount, PacketReturnProtectedBlockCount> {
+
     private int id;
 
     @Override
@@ -20,8 +23,7 @@ public class PacketGetProtectedBlockCount implements IMessage,IMessageHandler<Pa
         buf.writeInt(id);
     }
 
-    public PacketGetProtectedBlockCount() {
-    }
+    public PacketGetProtectedBlockCount() {}
 
     public PacketGetProtectedBlockCount(int id) {
         this.id = id;

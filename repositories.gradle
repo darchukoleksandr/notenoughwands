@@ -1,0 +1,24 @@
+// Add any additional repositories for your dependencies here
+
+repositories {
+    maven {
+        name "EngineHub Repository"
+        url "https://maven.enginehub.org/repo/"
+    }
+    maven { // The repo from which to get waila
+        name "Mobius Repo"
+        url "https://mobiusstrip.eu/maven"
+    }
+    maven { // the repo from which to get NEI and stuff
+        name 'CB Repo'
+        url "https://chickenbones.net/maven/"
+    }
+    maven {
+        name 'OC Repo'
+        url "https://maven.cil.li/"
+    }
+    maven {
+        name = "sonatype"
+        url = "https://oss.sonatype.org/content/repositories/snapshots/"
+    }
+}

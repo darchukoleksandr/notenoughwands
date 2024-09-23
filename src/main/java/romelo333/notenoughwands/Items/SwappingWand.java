@@ -1,9 +1,9 @@
 package romelo333.notenoughwands.Items;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -19,14 +19,14 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import romelo333.notenoughwands.Config;
 import romelo333.notenoughwands.ProtectedBlocks;
 import romelo333.notenoughwands.varia.Coordinate;
 import romelo333.notenoughwands.varia.Tools;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class SwappingWand extends GenericWand {
 
@@ -39,18 +39,24 @@ public class SwappingWand extends GenericWand {
 
     private float hardnessDistance = 35.0f;
 
-    public static final String[] descriptions = new String[] {
-        "3x3", "5x5", "7x7", "single"
-    };
+    public static final String[] descriptions = new String[] { "3x3", "5x5", "7x7", "single" };
 
     public SwappingWand() {
-        setup("SwappingWand", "swappingWand").xpUsage(4).availability(AVAILABILITY_ADVANCED).loot(5);
+        setup("SwappingWand", "swappingWand").xpUsage(4)
+            .availability(AVAILABILITY_ADVANCED)
+            .loot(5);
     }
 
     @Override
     public void initConfig(Configuration cfg) {
         super.initConfig(cfg);
-        hardnessDistance = (float) cfg.get(Config.CATEGORY_WANDS, getUnlocalizedName() + "_hardnessDistance", hardnessDistance, "How far away the hardness can be to allow swapping (100 means basically everything allowed)").getDouble();
+        hardnessDistance = (float) cfg
+            .get(
+                Config.CATEGORY_WANDS,
+                getUnlocalizedName() + "_hardnessDistance",
+                hardnessDistance,
+                "How far away the hardness can be to allow swapping (100 means basically everything allowed)")
+            .getDouble();
     }
 
     @Override
@@ -61,7 +67,8 @@ public class SwappingWand extends GenericWand {
             mode = MODE_FIRST;
         }
         Tools.notify(player, "Switched to " + descriptions[mode] + " mode");
-        Tools.getTagCompound(stack).setInteger("mode", mode);
+        Tools.getTagCompound(stack)
+            .setInteger("mode", mode);
     }
 
     @Override
@@ -84,7 +91,8 @@ public class SwappingWand extends GenericWand {
     }
 
     @Override
-    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float sx, float sy, float sz) {
+    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float sx,
+        float sy, float sz) {
         if (!world.isRemote) {
             if (player.isSneaking()) {
                 selectBlock(stack, player, world, x, y, z);
@@ -124,7 +132,7 @@ public class SwappingWand extends GenericWand {
             return;
         }
 
-        if (Math.abs(hardness-blockHardness) >= hardnessDistance) {
+        if (Math.abs(hardness - blockHardness) >= hardnessDistance) {
             Tools.error(player, "The hardness of this blocks differs too much to swap!");
             return;
         }
@@ -145,7 +153,14 @@ public class SwappingWand extends GenericWand {
                 if (!player.capabilities.isCreativeMode) {
                     Tools.giveItem(world, player, oldblock, oldmeta, 1, x, y, z);
                 }
-                Tools.playSound(world, block.stepSound.getBreakSound(), coordinate.getX(), coordinate.getY(), coordinate.getZ(), 1.0f, 1.0f);
+                Tools.playSound(
+                    world,
+                    block.stepSound.getBreakSound(),
+                    coordinate.getX(),
+                    coordinate.getY(),
+                    coordinate.getZ(),
+                    1.0f,
+                    1.0f);
                 world.setBlock(coordinate.getX(), coordinate.getY(), coordinate.getZ(), block, meta, 2);
                 player.openContainer.detectAndSendChanges();
                 registerUsage(stack, player, 1.0f);
@@ -184,20 +199,31 @@ public class SwappingWand extends GenericWand {
             if (block != null && block.getMaterial() != Material.air) {
                 int meta = player.worldObj.getBlockMetadata(mouseOver.blockX, mouseOver.blockY, mouseOver.blockZ);
 
-                int wandId = Tools.getTagCompound(wand).getInteger("block");
+                int wandId = Tools.getTagCompound(wand)
+                    .getInteger("block");
                 Block wandBlock = (Block) Block.blockRegistry.getObjectById(wandId);
-                int wandMeta = Tools.getTagCompound(wand).getInteger("meta");
+                int wandMeta = Tools.getTagCompound(wand)
+                    .getInteger("meta");
                 if (wandBlock == block && wandMeta == meta) {
                     return;
                 }
 
-                Set<Coordinate> coordinates = findSuitableBlocks(wand, player.worldObj, mouseOver.sideHit, mouseOver.blockX, mouseOver.blockY, mouseOver.blockZ, block, meta);
+                Set<Coordinate> coordinates = findSuitableBlocks(
+                    wand,
+                    player.worldObj,
+                    mouseOver.sideHit,
+                    mouseOver.blockX,
+                    mouseOver.blockY,
+                    mouseOver.blockZ,
+                    block,
+                    meta);
                 renderOutlines(evt, player, coordinates, 200, 230, 180);
             }
         }
     }
 
-    private Set<Coordinate> findSuitableBlocks(ItemStack stack, World world, int sideHit, int x, int y, int z, Block centerBlock, int centerMeta) {
+    private Set<Coordinate> findSuitableBlocks(ItemStack stack, World world, int sideHit, int x, int y, int z,
+        Block centerBlock, int centerMeta) {
         Set<Coordinate> coordinates = new HashSet<Coordinate>();
         int mode = getMode(stack);
         int dim = 0;
@@ -245,18 +271,30 @@ public class SwappingWand extends GenericWand {
         return coordinates;
     }
 
-    private void checkAndAddBlock(World world, int x, int y, int z, Block centerBlock, int centerMeta, Set<Coordinate> coordinates) {
+    private void checkAndAddBlock(World world, int x, int y, int z, Block centerBlock, int centerMeta,
+        Set<Coordinate> coordinates) {
         if (world.getBlock(x, y, z) == centerBlock && world.getBlockMetadata(x, y, z) == centerMeta) {
             coordinates.add(new Coordinate(x, y, z));
         }
     }
 
     private int getMode(ItemStack stack) {
-        return Tools.getTagCompound(stack).getInteger("mode");
+        return Tools.getTagCompound(stack)
+            .getInteger("mode");
     }
 
     @Override
     protected void setupCraftingInt(Item wandcore) {
-        GameRegistry.addRecipe(new ItemStack(this), "rg ", "gw ", "  w", 'r', Blocks.redstone_block, 'g', Blocks.glowstone, 'w', wandcore);
+        GameRegistry.addRecipe(
+            new ItemStack(this),
+            "rg ",
+            "gw ",
+            "  w",
+            'r',
+            Blocks.redstone_block,
+            'g',
+            Blocks.glowstone,
+            'w',
+            wandcore);
     }
 }

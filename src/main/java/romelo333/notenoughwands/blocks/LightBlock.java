@@ -1,8 +1,8 @@
 package romelo333.notenoughwands.blocks;
 
+import java.util.List;
+import java.util.Random;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -14,10 +14,11 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import java.util.List;
-import java.util.Random;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class LightBlock extends Block implements ITileEntityProvider {
+
     public LightBlock() {
         super(Material.portal);
         setHardness(0.0f);
@@ -46,8 +47,8 @@ public class LightBlock extends Block implements ITileEntityProvider {
     }
 
     @Override
-    public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB box, List list, Entity entity) {
-    }
+    public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB box, List list,
+        Entity entity) {}
 
     @Override
     public boolean shouldSideBeRendered(IBlockAccess blockAccess, int x, int y, int z, int side) {

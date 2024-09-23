@@ -1,14 +1,20 @@
 package romelo333.notenoughwands.proxy;
 
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
+
+import org.apache.logging.log4j.Level;
+
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Configuration;
-import org.apache.logging.log4j.Level;
-import romelo333.notenoughwands.*;
+import romelo333.notenoughwands.Config;
+import romelo333.notenoughwands.ForgeEventHandlers;
 import romelo333.notenoughwands.Items.GenericWand;
+import romelo333.notenoughwands.ModBlocks;
+import romelo333.notenoughwands.ModCrafting;
+import romelo333.notenoughwands.ModItems;
+import romelo333.notenoughwands.NotEnoughWands;
 import romelo333.notenoughwands.network.PacketHandler;
 import romelo333.notenoughwands.varia.WrenchChecker;
 

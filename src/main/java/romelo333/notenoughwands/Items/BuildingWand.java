@@ -1,9 +1,11 @@
 package romelo333.notenoughwands.Items;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -19,12 +21,14 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import romelo333.notenoughwands.varia.Coordinate;
 import romelo333.notenoughwands.varia.Tools;
 
-import java.util.*;
-
-public class BuildingWand extends GenericWand{
+public class BuildingWand extends GenericWand {
 
     public static final int MODE_FIRST = 0;
     public static final int MODE_9 = 0;
@@ -33,14 +37,14 @@ public class BuildingWand extends GenericWand{
     public static final int MODE_SINGLE = 3;
     public static final int MODE_LAST = MODE_SINGLE;
 
-    public static final String[] descriptions = new String[] {
-            "9 blocks", "9 blocks row", "25 blocks", "single"
-    };
+    public static final String[] descriptions = new String[] { "9 blocks", "9 blocks row", "25 blocks", "single" };
 
     public static final int[] amount = new int[] { 9, 9, 25, 1 };
 
     public BuildingWand() {
-        setup("BuildingWand", "buildingWand").xpUsage(4).availability(AVAILABILITY_ADVANCED).loot(3);
+        setup("BuildingWand", "buildingWand").xpUsage(4)
+            .availability(AVAILABILITY_ADVANCED)
+            .loot(3);
     }
 
     @Override
@@ -66,15 +70,18 @@ public class BuildingWand extends GenericWand{
             mode = MODE_FIRST;
         }
         Tools.notify(player, "Switched to " + descriptions[mode] + " mode");
-        Tools.getTagCompound(stack).setInteger("mode", mode);
+        Tools.getTagCompound(stack)
+            .setInteger("mode", mode);
     }
 
     private int getMode(ItemStack stack) {
-        return Tools.getTagCompound(stack).getInteger("mode");
+        return Tools.getTagCompound(stack)
+            .getInteger("mode");
     }
 
     @Override
-    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float sx, float sy, float sz) {
+    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float sx,
+        float sy, float sz) {
         if (!world.isRemote) {
             if (player.isSneaking()) {
                 undoPlaceBlock(stack, player, world, x, y, z);
@@ -98,8 +105,15 @@ public class BuildingWand extends GenericWand{
             if (!checkUsage(stack, player, 1.0f)) {
                 break;
             }
-            if (Tools.consumeInventoryItem(Item.getItemFromBlock(block), meta, player.inventory,player)) {
-                Tools.playSound(world, block.stepSound.getBreakSound(), coordinate.getX(), coordinate.getY(), coordinate.getZ(), 1.0f, 1.0f);
+            if (Tools.consumeInventoryItem(Item.getItemFromBlock(block), meta, player.inventory, player)) {
+                Tools.playSound(
+                    world,
+                    block.stepSound.getBreakSound(),
+                    coordinate.getX(),
+                    coordinate.getY(),
+                    coordinate.getZ(),
+                    1.0f,
+                    1.0f);
                 world.setBlock(coordinate.getX(), coordinate.getY(), coordinate.getZ(), block, meta, 2);
                 player.openContainer.detectAndSendChanges();
                 registerUsage(stack, player, 1.0f);
@@ -172,7 +186,8 @@ public class BuildingWand extends GenericWand{
         Tools.error(player, "Select at least one block of the area you want to undo!");
     }
 
-    private void performUndo(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, NBTTagCompound undoTag, Set<Coordinate> undo) {
+    private void performUndo(ItemStack stack, EntityPlayer player, World world, int x, int y, int z,
+        NBTTagCompound undoTag, Set<Coordinate> undo) {
         Block block = (Block) Block.blockRegistry.getObjectById(undoTag.getInteger("block"));
         int meta = undoTag.getInteger("meta");
 
@@ -181,7 +196,14 @@ public class BuildingWand extends GenericWand{
             Block testBlock = world.getBlock(coordinate.getX(), coordinate.getY(), coordinate.getZ());
             int testMeta = world.getBlockMetadata(coordinate.getX(), coordinate.getY(), coordinate.getZ());
             if (testBlock == block && testMeta == meta) {
-                Tools.playSound(world, block.stepSound.getBreakSound(), coordinate.getX(), coordinate.getY(), coordinate.getZ(), 1.0f, 1.0f);
+                Tools.playSound(
+                    world,
+                    block.stepSound.getBreakSound(),
+                    coordinate.getX(),
+                    coordinate.getY(),
+                    coordinate.getZ(),
+                    1.0f,
+                    1.0f);
                 world.setBlockToAir(coordinate.getX(), coordinate.getY(), coordinate.getZ());
                 cnt++;
             }
@@ -208,12 +230,11 @@ public class BuildingWand extends GenericWand{
         int[] undoY = undoTag.getIntArray("y");
         int[] undoZ = undoTag.getIntArray("z");
         Set<Coordinate> undo = new HashSet<Coordinate>();
-        for (int i = 0 ; i < undoX.length ; i++) {
+        for (int i = 0; i < undoX.length; i++) {
             undo.add(new Coordinate(undoX[i], undoY[i], undoZ[i]));
         }
         return undo;
     }
-
 
     @SideOnly(Side.CLIENT)
     @Override
@@ -255,7 +276,8 @@ public class BuildingWand extends GenericWand{
         }
     }
 
-    private Set<Coordinate> findSuitableBlocks(ItemStack stack, World world, int sideHit, int x, int y, int z, Block block, int meta) {
+    private Set<Coordinate> findSuitableBlocks(ItemStack stack, World world, int sideHit, int x, int y, int z,
+        Block block, int meta) {
         ForgeDirection direction = ForgeDirection.getOrientation(sideHit);
         Coordinate base = new Coordinate(x, y, z);
 
@@ -263,13 +285,22 @@ public class BuildingWand extends GenericWand{
         Set<Coordinate> done = new HashSet<Coordinate>();
         Deque<Coordinate> todo = new ArrayDeque<Coordinate>();
         todo.addLast(base);
-        findSuitableBlocks(world, coordinates, done, todo, direction, block, meta, amount[getMode(stack)], getMode(stack) == MODE_9ROW);
+        findSuitableBlocks(
+            world,
+            coordinates,
+            done,
+            todo,
+            direction,
+            block,
+            meta,
+            amount[getMode(stack)],
+            getMode(stack) == MODE_9ROW);
 
         return coordinates;
     }
 
-    private void findSuitableBlocks(World world, Set<Coordinate> coordinates, Set<Coordinate> done, Deque<Coordinate> todo, ForgeDirection direction, Block block, int meta, int maxAmount,
-                                    boolean rowMode) {
+    private void findSuitableBlocks(World world, Set<Coordinate> coordinates, Set<Coordinate> done,
+        Deque<Coordinate> todo, ForgeDirection direction, Block block, int meta, int maxAmount, boolean rowMode) {
 
         ForgeDirection dirA = null;
         ForgeDirection dirB = null;
@@ -278,12 +309,12 @@ public class BuildingWand extends GenericWand{
             Coordinate offset = base.add(direction);
             dirA = dir1(direction);
             dirB = dirA.getOpposite();
-            if (!isSuitable(world, block, meta, base.add(dirA), offset.add(dirA)) ||
-                !isSuitable(world, block, meta, base.add(dirB), offset.add(dirB))) {
+            if (!isSuitable(world, block, meta, base.add(dirA), offset.add(dirA))
+                || !isSuitable(world, block, meta, base.add(dirB), offset.add(dirB))) {
                 dirA = dir2(direction);
                 dirB = dirA.getOpposite();
-                if (!isSuitable(world, block, meta, base.add(dirA), offset.add(dirA)) ||
-                        !isSuitable(world, block, meta, base.add(dirB), offset.add(dirB))) {
+                if (!isSuitable(world, block, meta, base.add(dirA), offset.add(dirA))
+                    || !isSuitable(world, block, meta, base.add(dirB), offset.add(dirB))) {
                     dirA = dir3(direction);
                     dirB = dirA.getOpposite();
                 }
@@ -305,10 +336,18 @@ public class BuildingWand extends GenericWand{
                         todo.addLast(base.add(dir1(direction).getOpposite()));
                         todo.addLast(base.add(dir2(direction)));
                         todo.addLast(base.add(dir2(direction).getOpposite()));
-                        todo.addLast(base.add(dir1(direction)).add(dir2(direction)));
-                        todo.addLast(base.add(dir1(direction)).add(dir2(direction).getOpposite()));
-                        todo.addLast(base.add(dir1(direction).getOpposite()).add(dir2(direction)));
-                        todo.addLast(base.add(dir1(direction).getOpposite()).add(dir2(direction).getOpposite()));
+                        todo.addLast(
+                            base.add(dir1(direction))
+                                .add(dir2(direction)));
+                        todo.addLast(
+                            base.add(dir1(direction))
+                                .add(dir2(direction).getOpposite()));
+                        todo.addLast(
+                            base.add(dir1(direction).getOpposite())
+                                .add(dir2(direction)));
+                        todo.addLast(
+                            base.add(dir1(direction).getOpposite())
+                                .add(dir2(direction).getOpposite()));
                     }
                 }
             }
@@ -320,8 +359,9 @@ public class BuildingWand extends GenericWand{
         if (destBlock == null) {
             destBlock = Blocks.air;
         }
-        return world.getBlock(base.getX(), base.getY(), base.getZ()) == block && world.getBlockMetadata(base.getX(), base.getY(), base.getZ()) == meta &&
-                destBlock.isReplaceable(world, offset.getX(), offset.getY(), offset.getZ());
+        return world.getBlock(base.getX(), base.getY(), base.getZ()) == block
+            && world.getBlockMetadata(base.getX(), base.getY(), base.getZ()) == meta
+            && destBlock.isReplaceable(world, offset.getX(), offset.getY(), offset.getZ());
     }
 
     private ForgeDirection dir1(ForgeDirection direction) {
@@ -368,7 +408,6 @@ public class BuildingWand extends GenericWand{
         }
         return null;
     }
-
 
     @Override
     protected void setupCraftingInt(Item wandcore) {

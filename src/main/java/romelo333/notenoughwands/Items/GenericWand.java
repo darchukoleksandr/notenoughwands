@@ -1,15 +1,14 @@
 package romelo333.notenoughwands.Items;
 
-import cofh.api.energy.IEnergyContainerItem;
-import cpw.mods.fml.common.Optional;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -19,8 +18,14 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.config.Configuration;
+
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
+
+import cofh.api.energy.IEnergyContainerItem;
+import cpw.mods.fml.common.Optional;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import romelo333.notenoughwands.Config;
 import romelo333.notenoughwands.ModItems;
 import romelo333.notenoughwands.NotEnoughWands;
@@ -28,14 +33,9 @@ import romelo333.notenoughwands.ProtectedBlocks;
 import romelo333.notenoughwands.varia.Coordinate;
 import romelo333.notenoughwands.varia.Tools;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-@Optional.InterfaceList({
-        @Optional.Interface(iface = "cofh.api.energy.IEnergyContainerItem", modid = "CoFHAPI")})
+@Optional.InterfaceList({ @Optional.Interface(iface = "cofh.api.energy.IEnergyContainerItem", modid = "CoFHAPI") })
 public class GenericWand extends Item implements IEnergyContainerItem {
+
     protected int needsxp = 0;
     protected int needsrf = 0;
     protected int maxrf = 0;
@@ -51,13 +51,14 @@ public class GenericWand extends Item implements IEnergyContainerItem {
     private static List<GenericWand> wands = new ArrayList<GenericWand>();
 
     // Check if a given block can be picked up.
-    public static double checkPickup(EntityPlayer player, World world, int x, int y, int z, Block block, float maxHardness, Map<String, Double> blacklisted) {
+    public static double checkPickup(EntityPlayer player, World world, int x, int y, int z, Block block,
+        float maxHardness, Map<String, Double> blacklisted) {
         float hardness = block.getBlockHardness(world, x, y, z);
-        if (hardness > maxHardness){
+        if (hardness > maxHardness) {
             Tools.error(player, "This block is to hard to take!");
             return -1.0f;
         }
-        if (!block.canEntityDestroy(world, x, y, z, player)){
+        if (!block.canEntityDestroy(world, x, y, z, player)) {
             Tools.error(player, "You are not allowed to take this block!");
             return -1.0f;
         }
@@ -83,7 +84,8 @@ public class GenericWand extends Item implements IEnergyContainerItem {
     public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean b) {
         super.addInformation(stack, player, list, b);
         if (needsrf > 0) {
-            list.add(EnumChatFormatting.GREEN+"Energy: " + getEnergyStored(stack) + " / " + getMaxEnergyStored(stack));
+            list.add(
+                EnumChatFormatting.GREEN + "Energy: " + getEnergyStored(stack) + " / " + getMaxEnergyStored(stack));
         }
     }
 
@@ -127,22 +129,53 @@ public class GenericWand extends Item implements IEnergyContainerItem {
     }
 
     public void initConfig(Configuration cfg) {
-        needsxp = cfg.get(Config.CATEGORY_WANDS, getUnlocalizedName() + "_needsxp", needsxp, "How much levels this wand should consume on usage").getInt();
-        needsrf = cfg.get(Config.CATEGORY_WANDS, getUnlocalizedName() + "_needsrf", needsrf, "How much RF this wand should consume on usage").getInt();
-        maxrf = cfg.get(Config.CATEGORY_WANDS, getUnlocalizedName() + "_maxrf", maxrf, "Maximum RF this wand can hold").getInt();
-        setMaxDamage(cfg.get(Config.CATEGORY_WANDS, getUnlocalizedName() + "_maxdurability", getMaxDamage(), "Maximum durability for this wand").getInt());
-        availability = cfg.get(Config.CATEGORY_WANDS, getUnlocalizedName() + "_availability", availability, "Is this wand available? (0=no, 1=not craftable, 2=craftable advanced, 3=craftable normal)").getInt();
-        lootRarity = cfg.get(Config.CATEGORY_WANDS, getUnlocalizedName() + "_lootRarity", lootRarity, "How rare should this wand be in chests? Lower is more rare (0 is not in chests)").getInt();
+        needsxp = cfg
+            .get(
+                Config.CATEGORY_WANDS,
+                getUnlocalizedName() + "_needsxp",
+                needsxp,
+                "How much levels this wand should consume on usage")
+            .getInt();
+        needsrf = cfg
+            .get(
+                Config.CATEGORY_WANDS,
+                getUnlocalizedName() + "_needsrf",
+                needsrf,
+                "How much RF this wand should consume on usage")
+            .getInt();
+        maxrf = cfg.get(Config.CATEGORY_WANDS, getUnlocalizedName() + "_maxrf", maxrf, "Maximum RF this wand can hold")
+            .getInt();
+        setMaxDamage(
+            cfg.get(
+                Config.CATEGORY_WANDS,
+                getUnlocalizedName() + "_maxdurability",
+                getMaxDamage(),
+                "Maximum durability for this wand")
+                .getInt());
+        availability = cfg
+            .get(
+                Config.CATEGORY_WANDS,
+                getUnlocalizedName() + "_availability",
+                availability,
+                "Is this wand available? (0=no, 1=not craftable, 2=craftable advanced, 3=craftable normal)")
+            .getInt();
+        lootRarity = cfg
+            .get(
+                Config.CATEGORY_WANDS,
+                getUnlocalizedName() + "_lootRarity",
+                lootRarity,
+                "How rare should this wand be in chests? Lower is more rare (0 is not in chests)")
+            .getInt();
     }
 
-    //------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------
 
     protected boolean checkUsage(ItemStack stack, EntityPlayer player, float difficultyScale) {
         if (player.capabilities.isCreativeMode) {
             return true;
         }
         if (needsxp > 0) {
-            int experience = Tools.getPlayerXP(player) - (int)(needsxp * difficultyScale);
+            int experience = Tools.getPlayerXP(player) - (int) (needsxp * difficultyScale);
             if (experience <= 0) {
                 Tools.error(player, "Not enough experience!");
                 return false;
@@ -155,7 +188,7 @@ public class GenericWand extends Item implements IEnergyContainerItem {
             }
         }
         if (needsrf > 0) {
-            if (getEnergyStored(stack) < (int)(needsrf * difficultyScale)) {
+            if (getEnergyStored(stack) < (int) (needsrf * difficultyScale)) {
                 Tools.error(player, "Not enough energy to use this wand!");
                 return false;
             }
@@ -168,7 +201,7 @@ public class GenericWand extends Item implements IEnergyContainerItem {
             return;
         }
         if (needsxp > 0) {
-            Tools.addPlayerXP(player, -(int)(needsxp * difficultyScale));
+            Tools.addPlayerXP(player, -(int) (needsxp * difficultyScale));
         }
         if (isDamageable()) {
             stack.damageItem(1, player);
@@ -178,10 +211,9 @@ public class GenericWand extends Item implements IEnergyContainerItem {
         }
     }
 
-    public void toggleMode(EntityPlayer player, ItemStack stack) {
-    }
+    public void toggleMode(EntityPlayer player, ItemStack stack) {}
 
-    //------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------
 
     public static void setupCrafting() {
         for (GenericWand wand : wands) {
@@ -199,10 +231,9 @@ public class GenericWand extends Item implements IEnergyContainerItem {
         }
     }
 
-    protected void setupCraftingInt(Item wandcore) {
-    }
+    protected void setupCraftingInt(Item wandcore) {}
 
-    //------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------
 
     public static void setupChestLoot() {
         for (GenericWand wand : wands) {
@@ -226,19 +257,24 @@ public class GenericWand extends Item implements IEnergyContainerItem {
         chest.addItem(new WeightedRandomChestContent(this, 0, 1, 1, lootRarity));
     }
 
-    //------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------
 
     @SideOnly(Side.CLIENT)
     public void renderOverlay(RenderWorldLastEvent evt, EntityClientPlayerMP player, ItemStack wand) {
 
     }
 
-    protected static void renderOutlines(RenderWorldLastEvent evt, EntityClientPlayerMP p, Set<Coordinate> coordinates, int r, int g, int b) {
+    protected static void renderOutlines(RenderWorldLastEvent evt, EntityClientPlayerMP p, Set<Coordinate> coordinates,
+        int r, int g, int b) {
         double doubleX = p.lastTickPosX + (p.posX - p.lastTickPosX) * evt.partialTicks;
         double doubleY = p.lastTickPosY + (p.posY - p.lastTickPosY) * evt.partialTicks;
         double doubleZ = p.lastTickPosZ + (p.posZ - p.lastTickPosZ) * evt.partialTicks;
 
-        GL11.glPushAttrib(GL11.GL_CURRENT_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_ENABLE_BIT | GL11.GL_LIGHTING_BIT | GL11.GL_TEXTURE_BIT);
+        GL11.glPushAttrib(
+            GL11.GL_CURRENT_BIT | GL11.GL_DEPTH_BUFFER_BIT
+                | GL11.GL_ENABLE_BIT
+                | GL11.GL_LIGHTING_BIT
+                | GL11.GL_TEXTURE_BIT);
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glDisable(GL11.GL_LIGHTING);
@@ -273,38 +309,36 @@ public class GenericWand extends Item implements IEnergyContainerItem {
     }
 
     private static void renderBlockOutline(Tessellator tessellator, float mx, float my, float mz, float o) {
-        tessellator.addVertex(mx-o, my-o, mz-o);
-        tessellator.addVertex(mx+1+o, my-o, mz-o);
-        tessellator.addVertex(mx-o, my-o, mz-o);
-        tessellator.addVertex(mx-o, my+1+o, mz-o);
-        tessellator.addVertex(mx-o, my-o, mz-o);
-        tessellator.addVertex(mx-o, my-o, mz+1+o);
-        tessellator.addVertex(mx+1+o, my+1+o, mz+1+o);
-        tessellator.addVertex(mx-o, my+1+o, mz+1+o);
-        tessellator.addVertex(mx+1+o, my+1+o, mz+1+o);
-        tessellator.addVertex(mx+1+o, my-o, mz+1+o);
-        tessellator.addVertex(mx+1+o, my+1+o, mz+1+o);
-        tessellator.addVertex(mx+1+o, my+1+o, mz-o);
+        tessellator.addVertex(mx - o, my - o, mz - o);
+        tessellator.addVertex(mx + 1 + o, my - o, mz - o);
+        tessellator.addVertex(mx - o, my - o, mz - o);
+        tessellator.addVertex(mx - o, my + 1 + o, mz - o);
+        tessellator.addVertex(mx - o, my - o, mz - o);
+        tessellator.addVertex(mx - o, my - o, mz + 1 + o);
+        tessellator.addVertex(mx + 1 + o, my + 1 + o, mz + 1 + o);
+        tessellator.addVertex(mx - o, my + 1 + o, mz + 1 + o);
+        tessellator.addVertex(mx + 1 + o, my + 1 + o, mz + 1 + o);
+        tessellator.addVertex(mx + 1 + o, my - o, mz + 1 + o);
+        tessellator.addVertex(mx + 1 + o, my + 1 + o, mz + 1 + o);
+        tessellator.addVertex(mx + 1 + o, my + 1 + o, mz - o);
 
-        tessellator.addVertex(mx-o, my+1+o, mz-o);
-        tessellator.addVertex(mx-o, my+1+o, mz+1+o);
-        tessellator.addVertex(mx-o, my+1+o, mz-o);
-        tessellator.addVertex(mx+1+o, my+1+o, mz-o);
+        tessellator.addVertex(mx - o, my + 1 + o, mz - o);
+        tessellator.addVertex(mx - o, my + 1 + o, mz + 1 + o);
+        tessellator.addVertex(mx - o, my + 1 + o, mz - o);
+        tessellator.addVertex(mx + 1 + o, my + 1 + o, mz - o);
 
-        tessellator.addVertex(mx+1+o, my-o, mz-o);
-        tessellator.addVertex(mx+1+o, my-o, mz+1+o);
-        tessellator.addVertex(mx+1+o, my-o, mz-o);
-        tessellator.addVertex(mx+1+o, my+1+o, mz-o);
+        tessellator.addVertex(mx + 1 + o, my - o, mz - o);
+        tessellator.addVertex(mx + 1 + o, my - o, mz + 1 + o);
+        tessellator.addVertex(mx + 1 + o, my - o, mz - o);
+        tessellator.addVertex(mx + 1 + o, my + 1 + o, mz - o);
 
-        tessellator.addVertex(mx, my, mz+1+o);
-        tessellator.addVertex(mx+1+o, my, mz+1+o);
-        tessellator.addVertex(mx, my, mz+1+o);
-        tessellator.addVertex(mx, my+1+o, mz+1+o);
+        tessellator.addVertex(mx, my, mz + 1 + o);
+        tessellator.addVertex(mx + 1 + o, my, mz + 1 + o);
+        tessellator.addVertex(mx, my, mz + 1 + o);
+        tessellator.addVertex(mx, my + 1 + o, mz + 1 + o);
     }
 
-
-
-    //------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------
 
     @Override
     @Optional.Method(modid = "CoFHAPI")

@@ -7,6 +7,7 @@ import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class ContainerToItemRecipe extends ShapedRecipes {
+
     private Item itemToInheritFrom;
 
     public ContainerToItemRecipe(ItemStack[] grid, int index, ItemStack output) {
@@ -15,7 +16,7 @@ public class ContainerToItemRecipe extends ShapedRecipes {
     }
 
     private NBTTagCompound getNBTFromObject(InventoryCrafting inventoryCrafting) {
-        for (int i = 0 ; i < inventoryCrafting.getSizeInventory() ; i++) {
+        for (int i = 0; i < inventoryCrafting.getSizeInventory(); i++) {
             ItemStack stack = inventoryCrafting.getStackInSlot(i);
             if (stack != null && stack.getItem() != null) {
                 Item o = stack.getItem();

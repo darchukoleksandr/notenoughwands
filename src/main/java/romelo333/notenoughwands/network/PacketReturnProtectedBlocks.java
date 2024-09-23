@@ -1,13 +1,14 @@
 package romelo333.notenoughwands.network;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
 import romelo333.notenoughwands.varia.Coordinate;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class PacketReturnProtectedBlocks implements IMessage {
+
     private Set<Coordinate> blocks;
     private Set<Coordinate> childBlocks;
 
@@ -15,12 +16,12 @@ public class PacketReturnProtectedBlocks implements IMessage {
     public void fromBytes(ByteBuf buf) {
         int size = buf.readInt();
         blocks = new HashSet<Coordinate>(size);
-        for (int i = 0 ; i < size ; i++) {
+        for (int i = 0; i < size; i++) {
             blocks.add(new Coordinate(buf.readInt(), buf.readInt(), buf.readInt()));
         }
         size = buf.readInt();
         childBlocks = new HashSet<Coordinate>(size);
-        for (int i = 0 ; i < size ; i++) {
+        for (int i = 0; i < size; i++) {
             childBlocks.add(new Coordinate(buf.readInt(), buf.readInt(), buf.readInt()));
         }
     }
@@ -41,7 +42,6 @@ public class PacketReturnProtectedBlocks implements IMessage {
         }
     }
 
-
     public Set<Coordinate> getBlocks() {
         return blocks;
     }
@@ -50,8 +50,7 @@ public class PacketReturnProtectedBlocks implements IMessage {
         return childBlocks;
     }
 
-    public PacketReturnProtectedBlocks() {
-    }
+    public PacketReturnProtectedBlocks() {}
 
     public PacketReturnProtectedBlocks(Set<Coordinate> blocks, Set<Coordinate> childBlocks) {
         this.blocks = blocks;

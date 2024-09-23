@@ -1,11 +1,11 @@
 package romelo333.notenoughwands;
 
-
 import cpw.mods.fml.common.registry.GameRegistry;
 import romelo333.notenoughwands.blocks.LightBlock;
 import romelo333.notenoughwands.blocks.LightTE;
 
 public class ModBlocks {
+
     public static LightBlock lightBlock;
 
     public static void init() {

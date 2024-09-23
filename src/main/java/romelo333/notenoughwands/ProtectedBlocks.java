@@ -1,47 +1,51 @@
 package romelo333.notenoughwands;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
+
 import romelo333.notenoughwands.varia.Coordinate;
 import romelo333.notenoughwands.varia.GlobalCoordinate;
 import romelo333.notenoughwands.varia.Tools;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+public class ProtectedBlocks extends WorldSavedData {
 
-public class ProtectedBlocks extends WorldSavedData{
     public static final String NAME = "NEWProtectedBlocks";
     private static ProtectedBlocks instance;
 
     // Persisted data
-    private Map<GlobalCoordinate, Integer> blocks = new HashMap<GlobalCoordinate, Integer>();       // Map from coordinate -> ID
-    private Map<Integer,Integer> counter = new HashMap<Integer, Integer>(); // Keep track of number of protected blocks per ID
+    private Map<GlobalCoordinate, Integer> blocks = new HashMap<GlobalCoordinate, Integer>(); // Map from coordinate ->
+                                                                                              // ID
+    private Map<Integer, Integer> counter = new HashMap<Integer, Integer>(); // Keep track of number of protected blocks
+                                                                             // per ID
     private int lastId = 1;
 
     public ProtectedBlocks(String name) {
         super(name);
     }
 
-    public void save (World world){
+    public void save(World world) {
         world.mapStorage.setData(NAME, this);
         markDirty();
     }
 
-    public static ProtectedBlocks getProtectedBlocks (World world){
-        if (world.isRemote){
+    public static ProtectedBlocks getProtectedBlocks(World world) {
+        if (world.isRemote) {
             return null;
         }
-        if (instance != null){
+        if (instance != null) {
             return instance;
         }
-        instance = (ProtectedBlocks)world.mapStorage.loadData(ProtectedBlocks.class,NAME);
-        if (instance == null){
+        instance = (ProtectedBlocks) world.mapStorage.loadData(ProtectedBlocks.class, NAME);
+        if (instance == null) {
             instance = new ProtectedBlocks(NAME);
         }
         return instance;
@@ -50,7 +54,7 @@ public class ProtectedBlocks extends WorldSavedData{
     public int getNewId(World world) {
         lastId++;
         save(world);
-        return lastId-1;
+        return lastId - 1;
     }
 
     private void decrementProtection(Integer oldId) {
@@ -136,7 +140,7 @@ public class ProtectedBlocks extends WorldSavedData{
         return cnt;
     }
 
-    public boolean isProtected(World world, int x, int y, int z){
+    public boolean isProtected(World world, int x, int y, int z) {
         return blocks.containsKey(new GlobalCoordinate(x, y, z, world.provider.dimensionId));
     }
 
@@ -144,13 +148,15 @@ public class ProtectedBlocks extends WorldSavedData{
         return !blocks.isEmpty();
     }
 
-    public void fetchProtectedBlocks(Set<Coordinate> coordinates, World world, int x, int y, int z, float radius, int id) {
+    public void fetchProtectedBlocks(Set<Coordinate> coordinates, World world, int x, int y, int z, float radius,
+        int id) {
         radius *= radius;
         for (Map.Entry<GlobalCoordinate, Integer> entry : blocks.entrySet()) {
             if (entry.getValue() == id || (id == -2 && entry.getValue() != -1)) {
                 GlobalCoordinate block = entry.getKey();
                 if (block.getDim() == world.provider.dimensionId) {
-                    float sqdist = (x - block.getX()) * (x - block.getX()) + (y - block.getY()) * (y - block.getY()) + (z - block.getZ()) * (z - block.getZ());
+                    float sqdist = (x - block.getX()) * (x - block.getX()) + (y - block.getY()) * (y - block.getY())
+                        + (z - block.getZ()) * (z - block.getZ());
                     if (sqdist < radius) {
                         coordinates.add(block);
                     }
@@ -165,9 +171,13 @@ public class ProtectedBlocks extends WorldSavedData{
         blocks.clear();
         counter.clear();
         NBTTagList list = tagCompound.getTagList("blocks", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i<list.tagCount();i++){
+        for (int i = 0; i < list.tagCount(); i++) {
             NBTTagCompound tc = list.getCompoundTagAt(i);
-            GlobalCoordinate block = new GlobalCoordinate(tc.getInteger("x"),tc.getInteger("y"),tc.getInteger("z"),tc.getInteger("dim"));
+            GlobalCoordinate block = new GlobalCoordinate(
+                tc.getInteger("x"),
+                tc.getInteger("y"),
+                tc.getInteger("z"),
+                tc.getInteger("dim"));
             int id = tc.getInteger("id");
             blocks.put(block, id);
             incrementProtection(id);
@@ -188,6 +198,6 @@ public class ProtectedBlocks extends WorldSavedData{
             tc.setInteger("id", entry.getValue());
             list.appendTag(tc);
         }
-        tagCompound.setTag("blocks",list);
+        tagCompound.setTag("blocks", list);
     }
 }

@@ -1,7 +1,9 @@
 package romelo333.notenoughwands.Items;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -17,28 +19,41 @@ import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import cpw.mods.fml.common.registry.GameRegistry;
 import romelo333.notenoughwands.Config;
 import romelo333.notenoughwands.varia.Tools;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public class MovingWand extends GenericWand {
+
     private float maxHardness = 50;
     private int placeDistance = 4;
 
-    public Map<String,Double> blacklisted = new HashMap<String, Double>();
+    public Map<String, Double> blacklisted = new HashMap<String, Double>();
 
     public MovingWand() {
-        setup("MovingWand", "movingWand").xpUsage(3).availability(AVAILABILITY_NORMAL).loot(5);
+        setup("MovingWand", "movingWand").xpUsage(3)
+            .availability(AVAILABILITY_NORMAL)
+            .loot(5);
     }
 
     @Override
     public void initConfig(Configuration cfg) {
         super.initConfig(cfg);
-        maxHardness = (float) cfg.get(Config.CATEGORY_WANDS, getUnlocalizedName() + "_maxHardness", maxHardness, "Max hardness this block can move.)").getDouble();
-        placeDistance = cfg.get(Config.CATEGORY_WANDS, getUnlocalizedName() + "_placeDistance", placeDistance, "Distance at which to place blocks in 'in-air' mode").getInt();
+        maxHardness = (float) cfg
+            .get(
+                Config.CATEGORY_WANDS,
+                getUnlocalizedName() + "_maxHardness",
+                maxHardness,
+                "Max hardness this block can move.)")
+            .getDouble();
+        placeDistance = cfg
+            .get(
+                Config.CATEGORY_WANDS,
+                getUnlocalizedName() + "_placeDistance",
+                placeDistance,
+                "Distance at which to place blocks in 'in-air' mode")
+            .getInt();
 
         ConfigCategory category = cfg.getCategory(Config.CATEGORY_MOVINGBLACKLIST);
         if (category.isEmpty()) {
@@ -52,7 +67,10 @@ public class MovingWand extends GenericWand {
             setCost(cfg, "tile.blockAiry", 20.0);
         } else {
             for (Map.Entry<String, Property> entry : category.entrySet()) {
-                blacklisted.put(entry.getKey(), entry.getValue().getDouble());
+                blacklisted.put(
+                    entry.getKey(),
+                    entry.getValue()
+                        .getDouble());
             }
         }
     }
@@ -95,19 +113,26 @@ public class MovingWand extends GenericWand {
                 Vec3 lookVec = player.getLookVec();
                 Vec3 start = Vec3.createVectorHelper(player.posX, player.posY + player.getEyeHeight(), player.posZ);
                 int distance = this.placeDistance;
-                Vec3 end = start.addVector(lookVec.xCoord * distance, lookVec.yCoord * distance, lookVec.zCoord * distance);
+                Vec3 end = start
+                    .addVector(lookVec.xCoord * distance, lookVec.yCoord * distance, lookVec.zCoord * distance);
                 MovingObjectPosition position = world.rayTraceBlocks(start, end);
                 if (position == null) {
-                    place(stack, world, (int) end.xCoord, (int) end.yCoord, (int) end.zCoord, ForgeDirection.UNKNOWN.ordinal());
+                    place(
+                        stack,
+                        world,
+                        (int) end.xCoord,
+                        (int) end.yCoord,
+                        (int) end.zCoord,
+                        ForgeDirection.UNKNOWN.ordinal());
                 }
             }
         }
         return stack;
     }
 
-
     @Override
-    public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+    public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side,
+        float hitX, float hitY, float hitZ) {
         if (!world.isRemote) {
             NBTTagCompound compound = stack.getTagCompound();
             if (hasBlock(compound)) {
@@ -121,7 +146,8 @@ public class MovingWand extends GenericWand {
     }
 
     @Override
-    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float sx, float sy, float sz) {
+    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float sx,
+        float sy, float sz) {
         return true;
     }
 
@@ -195,6 +221,16 @@ public class MovingWand extends GenericWand {
 
     @Override
     protected void setupCraftingInt(Item wandcore) {
-        GameRegistry.addRecipe(new ItemStack(this), "re ", "ew ", "  w", 'r', Items.redstone, 'e', Items.ender_pearl, 'w', wandcore);
+        GameRegistry.addRecipe(
+            new ItemStack(this),
+            "re ",
+            "ew ",
+            "  w",
+            'r',
+            Items.redstone,
+            'e',
+            Items.ender_pearl,
+            'w',
+            wandcore);
     }
 }

@@ -1,17 +1,20 @@
 package romelo333.notenoughwands.blocks;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import romelo333.notenoughwands.ModRenderers;
 import romelo333.notenoughwands.NotEnoughWands;
 
 @SideOnly(Side.CLIENT)
 public class LightRenderer extends TileEntitySpecialRenderer {
+
     ResourceLocation texture = new ResourceLocation(NotEnoughWands.MODID.toLowerCase(), "textures/blocks/light.png");
 
     @Override
@@ -29,7 +32,7 @@ public class LightRenderer extends TileEntitySpecialRenderer {
         GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
 
         long t = System.currentTimeMillis() % 6;
-        ModRenderers.renderBillboardQuad(0.6f, t * (1.0f/6.0f), (1.0f/6.0f));
+        ModRenderers.renderBillboardQuad(0.6f, t * (1.0f / 6.0f), (1.0f / 6.0f));
 
         GL11.glPopMatrix();
 

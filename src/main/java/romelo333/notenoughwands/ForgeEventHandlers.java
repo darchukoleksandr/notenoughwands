@@ -1,26 +1,27 @@
 package romelo333.notenoughwands;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import java.util.List;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
+
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import romelo333.notenoughwands.varia.WrenchChecker;
 
-import java.util.Collection;
-import java.util.List;
-
 public class ForgeEventHandlers {
+
     @SubscribeEvent
-    public void onBlockBreakEvent (BlockEvent.BreakEvent event){
+    public void onBlockBreakEvent(BlockEvent.BreakEvent event) {
         World world = event.world;
         if (world.isRemote) {
             return;
         }
         ProtectedBlocks protectedBlocks = ProtectedBlocks.getProtectedBlocks(world);
-        if (protectedBlocks.isProtected(world, event.x, event.y, event.z)){
+        if (protectedBlocks.isProtected(world, event.x, event.y, event.z)) {
             event.setCanceled(true);
         }
     }
@@ -35,7 +36,6 @@ public class ForgeEventHandlers {
         if (!protectedBlocks.hasProtections()) {
             return;
         }
-
 
         List<ChunkPosition> affectedBlocks = event.getAffectedBlocks();
 
@@ -65,7 +65,5 @@ public class ForgeEventHandlers {
         }
 
     }
-
-
 
 }

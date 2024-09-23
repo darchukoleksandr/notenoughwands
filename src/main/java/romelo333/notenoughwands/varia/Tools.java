@@ -15,6 +15,7 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 
 public class Tools {
+
     public static void error(EntityPlayer player, String msg) {
         player.addChatComponentMessage(new ChatComponentText(EnumChatFormatting.RED + msg));
     }
@@ -51,7 +52,8 @@ public class Tools {
 
     public static int finditem(Item item, int meta, InventoryPlayer inv) {
         for (int i = 0; i < inv.mainInventory.length; ++i) {
-            if (inv.mainInventory[i] != null && inv.mainInventory[i].getItem() == item && meta == inv.mainInventory[i].getItemDamage()) {
+            if (inv.mainInventory[i] != null && inv.mainInventory[i].getItem() == item
+                && meta == inv.mainInventory[i].getItemDamage()) {
                 return i;
             }
         }
@@ -61,7 +63,7 @@ public class Tools {
 
     public static NBTTagCompound getTagCompound(ItemStack stack) {
         NBTTagCompound tagCompound = stack.getTagCompound();
-        if (tagCompound == null){
+        if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
             stack.setTagCompound(tagCompound);
         }
@@ -69,7 +71,7 @@ public class Tools {
     }
 
     public static String getBlockName(Block block, int meta) {
-        ItemStack s = new ItemStack(block,1,meta);
+        ItemStack s = new ItemStack(block, 1, meta);
         if (s.getItem() == null) {
             return null;
         }
@@ -77,7 +79,7 @@ public class Tools {
     }
 
     public static int getPlayerXP(EntityPlayer player) {
-        return (int)(getExperienceForLevel(player.experienceLevel) + (player.experience * player.xpBarCap()));
+        return (int) (getExperienceForLevel(player.experienceLevel) + (player.experience * player.xpBarCap()));
     }
 
     public static boolean addPlayerXP(EntityPlayer player, int amount) {
@@ -88,18 +90,20 @@ public class Tools {
         player.experienceTotal = experience;
         player.experienceLevel = getLevelForExperience(experience);
         int expForLevel = getExperienceForLevel(player.experienceLevel);
-        player.experience = (experience - expForLevel) / (float)player.xpBarCap();
+        player.experience = (experience - expForLevel) / (float) player.xpBarCap();
         return true;
     }
 
     public static int getExperienceForLevel(int level) {
-        if (level == 0) { return 0; }
+        if (level == 0) {
+            return 0;
+        }
         if (level > 0 && level < 16) {
             return level * 17;
         } else if (level > 15 && level < 31) {
-            return (int)(1.5 * Math.pow(level, 2) - 29.5 * level + 360);
+            return (int) (1.5 * Math.pow(level, 2) - 29.5 * level + 360);
         } else {
-            return (int)(3.5 * Math.pow(level, 2) - 151.5 * level + 2220);
+            return (int) (3.5 * Math.pow(level, 2) - 151.5 * level + 2220);
         }
     }
 
@@ -118,11 +122,12 @@ public class Tools {
     }
 
     // Server side: play a sound to all nearby players
-    public static void playSound(World worldObj, String soundName, double x, double y, double z, double volume, double pitch) {
+    public static void playSound(World worldObj, String soundName, double x, double y, double z, double volume,
+        double pitch) {
         S29PacketSoundEffect soundEffect = new S29PacketSoundEffect(soundName, x, y, z, (float) volume, (float) pitch);
 
         for (int j = 0; j < worldObj.playerEntities.size(); ++j) {
-            EntityPlayerMP entityplayermp = (EntityPlayerMP)worldObj.playerEntities.get(j);
+            EntityPlayerMP entityplayermp = (EntityPlayerMP) worldObj.playerEntities.get(j);
             ChunkCoordinates chunkcoordinates = entityplayermp.getPlayerCoordinates();
             double d7 = x - chunkcoordinates.posX;
             double d8 = y - chunkcoordinates.posY;

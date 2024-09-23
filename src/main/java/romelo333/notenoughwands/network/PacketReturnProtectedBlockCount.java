@@ -4,6 +4,7 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
 
 public class PacketReturnProtectedBlockCount implements IMessage {
+
     private int count;
 
     @Override
@@ -20,8 +21,7 @@ public class PacketReturnProtectedBlockCount implements IMessage {
         return count;
     }
 
-    public PacketReturnProtectedBlockCount() {
-    }
+    public PacketReturnProtectedBlockCount() {}
 
     public PacketReturnProtectedBlockCount(int count) {
         this.count = count;

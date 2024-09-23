@@ -3,6 +3,7 @@ package romelo333.notenoughwands.varia;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class Coordinate {
+
     private final int x;
     private final int y;
     private final int z;

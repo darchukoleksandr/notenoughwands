@@ -1,9 +1,9 @@
 package romelo333.notenoughwands.Items;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -20,16 +20,16 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import romelo333.notenoughwands.Config;
 import romelo333.notenoughwands.ModItems;
 import romelo333.notenoughwands.varia.Coordinate;
 import romelo333.notenoughwands.varia.Tools;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-public class DisplacementWand extends GenericWand{
+public class DisplacementWand extends GenericWand {
 
     private float maxHardness = 50;
 
@@ -40,20 +40,26 @@ public class DisplacementWand extends GenericWand{
     public static final int MODE_SINGLE = 3;
     public static final int MODE_LAST = MODE_SINGLE;
 
-    public static final String[] descriptions = new String[] {
-            "3x3", "5x5", "7x7", "single"
-    };
+    public static final String[] descriptions = new String[] { "3x3", "5x5", "7x7", "single" };
 
     public static final int[] amount = new int[] { 9, 9, 25, 1 };
 
     public DisplacementWand() {
-        setup("DisplacementWand", "displacementWand").xpUsage(4).availability(AVAILABILITY_NORMAL).loot(3);
+        setup("DisplacementWand", "displacementWand").xpUsage(4)
+            .availability(AVAILABILITY_NORMAL)
+            .loot(3);
     }
 
     @Override
     public void initConfig(Configuration cfg) {
         super.initConfig(cfg);
-        maxHardness = (float) cfg.get(Config.CATEGORY_WANDS, getUnlocalizedName() + "_maxHardness", maxHardness, "Max hardness this block can move.)").getDouble();
+        maxHardness = (float) cfg
+            .get(
+                Config.CATEGORY_WANDS,
+                getUnlocalizedName() + "_maxHardness",
+                maxHardness,
+                "Max hardness this block can move.)")
+            .getDouble();
     }
 
     @Override
@@ -73,15 +79,18 @@ public class DisplacementWand extends GenericWand{
             mode = MODE_FIRST;
         }
         Tools.notify(player, "Switched to " + descriptions[mode] + " mode");
-        Tools.getTagCompound(stack).setInteger("mode", mode);
+        Tools.getTagCompound(stack)
+            .setInteger("mode", mode);
     }
 
     private int getMode(ItemStack stack) {
-        return Tools.getTagCompound(stack).getInteger("mode");
+        return Tools.getTagCompound(stack)
+            .getInteger("mode");
     }
 
     @Override
-    public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+    public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side,
+        float hitX, float hitY, float hitZ) {
         if (!world.isRemote) {
             if (player.isSneaking()) {
                 pullBlocks(stack, player, world, x, y, z, side);
@@ -110,7 +119,8 @@ public class DisplacementWand extends GenericWand{
             return;
         }
         Set<Coordinate> coordinates = findSuitableBlocks(stack, world, side, x, y, z);
-        ForgeDirection direction = ForgeDirection.getOrientation(side).getOpposite();
+        ForgeDirection direction = ForgeDirection.getOrientation(side)
+            .getOpposite();
         int cnt = moveBlocks(player, world, coordinates, direction);
         if (cnt > 0) {
             registerUsage(stack, player, 1.0f);
@@ -127,11 +137,19 @@ public class DisplacementWand extends GenericWand{
             Coordinate otherC = coordinate.add(direction);
             Block otherBlock = world.getBlock(otherC.getX(), otherC.getY(), otherC.getZ());
             if (otherBlock.isReplaceable(world, otherC.getX(), otherC.getY(), otherC.getZ())) {
-                double cost = GenericWand.checkPickup(player, world, xx, yy, zz, block, maxHardness, ModItems.movingWand.blacklisted);
+                double cost = GenericWand
+                    .checkPickup(player, world, xx, yy, zz, block, maxHardness, ModItems.movingWand.blacklisted);
                 if (cost >= 0.0) {
                     cnt++;
                     int meta = world.getBlockMetadata(xx, yy, zz);
-                    Tools.playSound(world, block.stepSound.getBreakSound(), coordinate.getX(), coordinate.getY(), coordinate.getZ(), 1.0f, 1.0f);
+                    Tools.playSound(
+                        world,
+                        block.stepSound.getBreakSound(),
+                        coordinate.getX(),
+                        coordinate.getY(),
+                        coordinate.getZ(),
+                        1.0f,
+                        1.0f);
                     TileEntity tileEntity = world.getTileEntity(xx, yy, zz);
                     NBTTagCompound tc = null;
                     if (tileEntity != null) {
@@ -236,7 +254,17 @@ public class DisplacementWand extends GenericWand{
 
     @Override
     protected void setupCraftingInt(Item wandcore) {
-        GameRegistry.addRecipe(new ItemStack(this), "eb ", "bw ", "  w", 'e', Items.ender_pearl, 'b', Items.brick, 'w', wandcore);
+        GameRegistry.addRecipe(
+            new ItemStack(this),
+            "eb ",
+            "bw ",
+            "  w",
+            'e',
+            Items.ender_pearl,
+            'b',
+            Items.brick,
+            'w',
+            wandcore);
     }
 
 }

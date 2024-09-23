@@ -1,7 +1,7 @@
 package romelo333.notenoughwands.Items;
 
+import java.util.List;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.IMob;
@@ -14,28 +14,53 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.config.Configuration;
+
+import cpw.mods.fml.common.registry.GameRegistry;
 import romelo333.notenoughwands.Config;
 import romelo333.notenoughwands.varia.Tools;
 
-import java.util.List;
-
 public class CapturingWand extends GenericWand {
+
     private boolean allowPassive = true;
     private boolean allowHostile = true;
     private float difficultyMult = 0.0f;
     private float diffcultyAdd = 1.0f;
 
     public CapturingWand() {
-        setup("CapturingWand", "capturingWand").xpUsage(10).availability(AVAILABILITY_ADVANCED).loot(3);
+        setup("CapturingWand", "capturingWand").xpUsage(10)
+            .availability(AVAILABILITY_ADVANCED)
+            .loot(3);
     }
 
     @Override
     public void initConfig(Configuration cfg) {
         super.initConfig(cfg);
-        allowPassive =  cfg.get(Config.CATEGORY_WANDS, getUnlocalizedName() + "_allowPassive", allowPassive, "Allow capturing passive mobs").getBoolean();
-        allowHostile =  cfg.get(Config.CATEGORY_WANDS, getUnlocalizedName() + "_allowHostile", allowHostile, "Allow capturing hostile mobs").getBoolean();
-        difficultyMult = (float) cfg.get(Config.CATEGORY_WANDS, getUnlocalizedName() + "_difficultyMult", difficultyMult, "Multiply the HP of a mob with this number to get the difficulty scale that affects XP/RF usage (a final result of 1.0 means that the default XP/RF is used)").getDouble();
-        diffcultyAdd = (float) cfg.get(Config.CATEGORY_WANDS, getUnlocalizedName() + "_diffcultyAdd", diffcultyAdd, "Add this to the HP * difficultyMult to get the final difficulty scale that affects XP/RF usage (a final result of 1.0 means that the default XP/RF is used)").getDouble();
+        allowPassive = cfg
+            .get(
+                Config.CATEGORY_WANDS,
+                getUnlocalizedName() + "_allowPassive",
+                allowPassive,
+                "Allow capturing passive mobs")
+            .getBoolean();
+        allowHostile = cfg
+            .get(
+                Config.CATEGORY_WANDS,
+                getUnlocalizedName() + "_allowHostile",
+                allowHostile,
+                "Allow capturing hostile mobs")
+            .getBoolean();
+        difficultyMult = (float) cfg.get(
+            Config.CATEGORY_WANDS,
+            getUnlocalizedName() + "_difficultyMult",
+            difficultyMult,
+            "Multiply the HP of a mob with this number to get the difficulty scale that affects XP/RF usage (a final result of 1.0 means that the default XP/RF is used)")
+            .getDouble();
+        diffcultyAdd = (float) cfg.get(
+            Config.CATEGORY_WANDS,
+            getUnlocalizedName() + "_diffcultyAdd",
+            diffcultyAdd,
+            "Add this to the HP * difficultyMult to get the final difficulty scale that affects XP/RF usage (a final result of 1.0 means that the default XP/RF is used)")
+            .getDouble();
     }
 
     @Override
@@ -47,7 +72,8 @@ public class CapturingWand extends GenericWand {
                 String type = tagCompound.getString("type");
                 String name = null;
                 try {
-                    name = Class.forName(type).getSimpleName();
+                    name = Class.forName(type)
+                        .getSimpleName();
                 } catch (ClassNotFoundException e) {
                     name = "?";
                 }
@@ -59,7 +85,8 @@ public class CapturingWand extends GenericWand {
     }
 
     @Override
-    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float sx, float sy, float sz) {
+    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float sx,
+        float sy, float sz) {
         if (!world.isRemote) {
             NBTTagCompound tagCompound = Tools.getTagCompound(stack);
             if (tagCompound.hasKey("mob")) {
@@ -71,7 +98,7 @@ public class CapturingWand extends GenericWand {
                     return true;
                 }
                 entityLivingBase.readEntityFromNBT((NBTTagCompound) mobCompound);
-                entityLivingBase.setLocationAndAngles(x+.5, y+1, z+.5, 0, 0);
+                entityLivingBase.setLocationAndAngles(x + .5, y + 1, z + .5, 0, 0);
                 tagCompound.removeTag("mob");
                 tagCompound.removeTag("type");
                 world.spawnEntityInWorld(entityLivingBase);
@@ -85,7 +112,9 @@ public class CapturingWand extends GenericWand {
     private EntityLivingBase createEntity(EntityPlayer player, World world, String type) {
         EntityLivingBase entityLivingBase;
         try {
-            entityLivingBase = (EntityLivingBase) Class.forName(type).getConstructor(World.class).newInstance(world);
+            entityLivingBase = (EntityLivingBase) Class.forName(type)
+                .getConstructor(World.class)
+                .newInstance(world);
         } catch (Exception e) {
             entityLivingBase = null;
         }
@@ -96,7 +125,8 @@ public class CapturingWand extends GenericWand {
     public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
         if (!player.worldObj.isRemote) {
             if (entity instanceof EntityLivingBase) {
-                if (Tools.getTagCompound(stack).hasKey("mob")) {
+                if (Tools.getTagCompound(stack)
+                    .hasKey("mob")) {
                     Tools.error(player, "There is already a mob in this wand!");
                     return true;
                 }
@@ -123,8 +153,13 @@ public class CapturingWand extends GenericWand {
 
                 NBTTagCompound tagCompound = new NBTTagCompound();
                 entityLivingBase.writeToNBT(tagCompound);
-                Tools.getTagCompound(stack).setTag("mob", tagCompound);
-                Tools.getTagCompound(stack).setString("type", entity.getClass().getCanonicalName());
+                Tools.getTagCompound(stack)
+                    .setTag("mob", tagCompound);
+                Tools.getTagCompound(stack)
+                    .setString(
+                        "type",
+                        entity.getClass()
+                            .getCanonicalName());
                 player.worldObj.removeEntity(entity);
 
                 registerUsage(stack, player, difficultyScale);
@@ -137,6 +172,16 @@ public class CapturingWand extends GenericWand {
 
     @Override
     protected void setupCraftingInt(Item wandcore) {
-        GameRegistry.addRecipe(new ItemStack(this), "dr ", "rw ", "  w", 'r', Items.rotten_flesh, 'd', Items.diamond, 'w', wandcore);
+        GameRegistry.addRecipe(
+            new ItemStack(this),
+            "dr ",
+            "rw ",
+            "  w",
+            'r',
+            Items.rotten_flesh,
+            'd',
+            Items.diamond,
+            'w',
+            wandcore);
     }
 }

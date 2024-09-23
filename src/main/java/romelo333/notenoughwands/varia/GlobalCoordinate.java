@@ -1,8 +1,7 @@
 package romelo333.notenoughwands.varia;
 
-import net.minecraftforge.common.util.ForgeDirection;
-
 public class GlobalCoordinate extends Coordinate {
+
     private final int dim;
 
     public GlobalCoordinate(int x, int y, int z, int dim) {
